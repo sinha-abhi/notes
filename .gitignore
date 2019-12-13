@@ -1,0 +1,10 @@
+# ignore latex generated files
+*.aux
+*.log
+*.gz
+*.out
+
+# stupid swp files
+*.swp
+
+pdf/clean.sh
