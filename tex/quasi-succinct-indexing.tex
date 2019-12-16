@@ -61,7 +61,7 @@ where \(u\) is some upper bound.
     We store the sequence in a ``high/low bit representation'' using two \textit{bit-arrays}.
     \begin{itemize}
     \item
-        The lower \(l = \max{\lbrace 0, \left \lfloor\log{\frac{u}{n}} \right \rfloor} \rbrace}\) 
+        The lower \(l = \max{\lbrace 0, \left \lfloor\log{\frac{u}{n}} \right \rfloor \rbrace }\) 
         bits of each \(x_i\) are stored \textit{explicitly} and \textit{contiguously} in a 
         \textbf{lower-bits array}.
     \item
@@ -95,7 +95,8 @@ where \(u\) is some upper bound.
     \[ \left \lceil \log{\frac{u}{n}} \right \rceil = \log{\frac{u}{n}}, \]
     but the previous equation is bounded by \(n\) instead of \(2n\).
     The informational-theorectial limit is
-    \[ \left \lceil \log{\binom{u + n}{n}} \right \rceil \approx n \log{\left( \frac{u + n}{n} \right), \]
+    \[ \left \lceil \log{\binom{u + n}{n}} \right \rceil 
+       \approx n \log{\left( \frac{u + n}{n} \right) }, \]
     so we conclude that this representation is close to succinct.
     \end{proof}
 \end{itemize}
@@ -137,7 +138,7 @@ The upper bits array:
 +----+----+---+----+--------+
 \end{verbatim}
 
-\subsection{Recovering \(x_i\)}\label{recovering-xi}
+\subsection{Recovering \texorpdfstring{\(x_i\)}{xi}}\label{recovering-xi}
 \begin{itemize}
 \item
     Perform \(i\) unary code reads in the upper-bits array to position \(p\) bits
@@ -171,7 +172,12 @@ The upper bits array:
     then \(i \mod q\) sequential reads
 \end{itemize}
 \subsubsection{Skip Pointers}\label{skip-pointers}
+\begin{itemize}
+\item
+    -- TODO --
+\end{itemize}
 
 \subsection{Quasi-Succinct Bitstream}\label{quasi-succinct-bitstream}
+-- TODO --
 
 \end{document}
