@@ -52,9 +52,13 @@ The flipped version is often called negated unary code.
 \( 5 \rightarrow \texttt{111110} \text{ or } \texttt{000001} \)
 
 \subsection{Representation of a Monotone Sequence}\label{monotone-sequence}
-Suppose we have the following monotone sequence for \(x_i \in \NN\):
+Suppose we have the following monotone sequence for \(x_i \in \NN\):    
 \[ x_0 \leq x_1 \leq \ldots \leq x_{n-1} \leq u, \]
-where \(u\) is some upper bound.
+where \(u\) is some upper bound. 
+A question to consider: what is the most effective way to choose \(u\)?
+Two possible options are to choose \(u\) s.t.
+    (1) \(\log{u} \in \NN\), or
+    (2) \(u = x_{n-1} + 1\).
 
 \begin{itemize}
 \item
@@ -65,7 +69,7 @@ where \(u\) is some upper bound.
         bits of each \(x_i\) are stored \textit{explicitly} and \textit{contiguously} in a 
         \textbf{lower-bits array}.
     \item
-        The remaining upper bits are stored as a sequence of \textit{unary code gaps} in an
+        The remaining upper-bits are stored as a sequence of \textit{unary code gaps} in an
         \textbf{upper-bits array}.
         \begin{itemize}
         \item
@@ -111,13 +115,13 @@ Split the lower \(l\) bits of the binary representation of each element of the l
 | 1 | 01 | | 10 | 00 | | 10 | 00 | | 11 | 11 | | 1000 | 00 |
 +---+----+ +----+----+ +----+----+ +----+----+ +------+----+
 \end{verbatim}
-The lower bits array:
+The lower-bits array:
 \begin{verbatim}
 +----+----+----+----+----+----+
 | 01 | 00 | 00 | 11 | 00 | 00 |
 +----+----+----+----+----+----+
 \end{verbatim}
-To compute the upper bits array, we find the difference between each of the upper bits
+To compute the upper-bits array, we find the difference between each of the upper bits
 and then convert to unary code.
 \begin{verbatim}
     5           8           8          15            32
@@ -129,8 +133,8 @@ and then convert to unary code.
   v          v           v           v            v
   1          2           2           3            8
 \end{verbatim}
-Recall that we choose \(x_{-1} = 0\) for simplicity.
-The upper bits array:
+Recall that we choose \(x_{-1} = 0\) for consistency.
+The upper-bits array:
 \begin{verbatim}
   1     1   0   1      5
 +----+----+---+----+--------+
@@ -141,17 +145,17 @@ The upper bits array:
 \subsection{Recovering \texorpdfstring{\(x_i\)}{xi}}\label{recovering-xi}
 \begin{itemize}
 \item
-    Perform \(i\) unary code reads in the upper-bits array to position \(p\) bits
+    Perform \(i\) unary code reads in the upper-bits array to \(p^{th}\) bit position
     \begin{itemize}
     \item
         The value of the upper bits is exactly \(p - i\)
     \item
         \underline{Example}: To read the upper bits of 15, we perform 4 unary code reads to 
-        position 7 of the upper bits array.
+        position 7 of the upper-bits array.
         Thus, the value of the upper bits of 15 is \(7 - 4 = 3\).
     \end{itemize}
 \item
-    Extract lower bits with random access at position \(il\) in the lower bits array
+    Extract lower bits with random access at position \(il\) in the lower-bits array
 \end{itemize}
 
 \subsection{Some Optimizations for Accessing}\label{optimizations}
@@ -159,25 +163,85 @@ The upper bits array:
 \subsubsection{Forward Pointers}\label{forward-pointers}
 \begin{itemize}
 \item
-    Choose a \textit{quantum} \(q\)
+    Choose a \textit{quantum} \(q\).
 \item
-    Store \textbf{forward pointers} at positions that one would reach after 
-    \(kq\) unary code reads
+    Store \textbf{forward pointers} at positions that we would reach after 
+    \(kq\) unary code reads.
     \begin{itemize}
     \item
-        This is the position immediately after \(kq - 1\) bits
+        This is the position immediately after \(kq - 1\) bits.
     \end{itemize}
 \item
     Retrieve \(x_i\) by simulatinging \(q \left \lfloor \frac{i}{q} \right \rfloor\) reads
-    then \(i \mod q\) sequential reads
+    then \(i \mod q\) sequential reads.
+\item
+    On average, recovering \(x_i\) takes constant time.
+\item
+    Memory wise, recovery takes at most \(3q\) bits.
+\item
+    A smaller \(q\) takes less reads, but requires more space.
 \end{itemize}
 \subsubsection{Skip Pointers}\label{skip-pointers}
 \begin{itemize}
 \item
-    -- TODO --
+    Store positions reached at negated unary code bits.
+    \begin{itemize}
+    \item
+        In other words, store pointers to the positions of each \texttt{1} in the
+        upper-bits array.
+    \end{itemize}
 \end{itemize}
+A similar analysis of time and space complexity can be done, but I don't really feel
+like doing that right now. This method may not even be that helpful for what I want.
 
 \subsection{Quasi-Succinct Bitstream}\label{quasi-succinct-bitstream}
--- TODO --
+\subsubsection{Bitstream Layout}\label{bitstream-layout}
+The desired Bitstream Layout is
+\begin{verbatim}
++----------+-----+-----+---------+-----+-----+---------+-------+
+| metadata | p_0 | ... | p_{s-1} | l_0 | ... | l_{n-1} | u ... |
++----------+-----+-----+---------+-----+-----+---------+-------+
+                        Bitstream Layout
+\end{verbatim}
+\begin{itemize}
+\item
+    \(n\): number of elements
+\item
+    \(u\): upper bound of \(x_i\)
+\item
+    \(l = \max{\lbrace 0, \left \lfloor\log{\frac{u}{n}} \right \rfloor \rbrace } \):
+    number of bits of each element stored in lower-bits array
+\item
+    \(q\): arbitrary quantum
+\item
+    \(m = n + \left \lfloor \frac{u}{2^l} \right \rfloor \):
+    maximum length of the \textit{upper-bits array}
+\item
+    \(w = \left \lceil \log{(m + 1)} \right \rceil  \):
+    width of the pointers
+    \begin{itemize}
+    \item
+        If \(u\) is not known, then the metadata must contain data
+        to compute \(w\).
+    \end{itemize}
+\item
+    \(s = \left \lfloor \frac{n}{q} \right \rfloor \):
+    number of forward pointers
+    \begin{itemize}
+    \item
+        \(s \leq \left \lfloor \frac{m}{q} \right \rfloor \)
+        for skip pointers that point to negated unary codes
+    \end{itemize}
+\item
+    \(d + sw\): 
+    beginning position of lower-bits array
+\item
+    \(sw + nl + d\): 
+    beginning position of upper-bits array
+\end{itemize}
+
+\subsubsection{Information in the Metadata}\label{metadata}
+We want to store \(n\), \(l\), \(q\), and \(w\) in the metadata in some order.
+Order does not matter, as long as, it is consistent and clearly marked in the implementation.
 
 \end{document}
