@@ -2,11 +2,23 @@
 | My Notes |
 +----------+
 
-    Notes about things that I'm working on, or things that I want to come back
-    to in the future.
+    Notes about things that I need for stuff I'm working on, or things that 
+    I want to come back to in the future.
+
+Compilation
+===========
+
+I use `pdflatex` to compile. For a full list of required packages, see the packages 
+I use in my preamble and in the various `.tex` files.
+
+My preamble can be found at 
+<https://github.com/sinha-abhi/configuration/blob/master/preamble.tex>.
+
+To compile (from the tex/ directory):
+`pdflatex -interaction=nonstopmode -output-dir=../pdf *.tex`
 
 Topic List
 ==========
-(* in progress, ^ for the future)
 
-    - Quasi Succinct Indexing
+    - Quasi-Succinct Indexing
+    - Implementing a subtype of `AbstractArray` in Julia

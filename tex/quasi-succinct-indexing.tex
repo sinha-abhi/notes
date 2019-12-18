@@ -6,8 +6,16 @@
 % 2019-12-12
 \documentclass[10pt]{article}
 
+%--
+% Ubuntu preamble location 
 %\input{/home/abhi/abhi/personal/git-repos/config/preamble.tex}
-\input{/Users/abhisinha/git/configuration/preamble.tex}
+
+% Fedora preamble location 
+\input{/home/abhi/abhi/git-repos/configuration/preamble.tex}
+
+% Darwin preamble location 
+%\input{/Users/abhisinha/git/configuration/preamble.tex}
+%--
 
 \title{Notes}
 \subject{Quasi-Succinct Indexing}
@@ -117,9 +125,9 @@ Split the lower \(l\) bits of the binary representation of each element of the l
 \end{verbatim}
 The lower-bits array:
 \begin{verbatim}
-+----+----+----+----+----+----+
-| 01 | 00 | 00 | 11 | 00 | 00 |
-+----+----+----+----+----+----+
++----+----+----+----+----+
+| 01 | 00 | 00 | 11 | 00 |
++----+----+----+----+----+
 \end{verbatim}
 To compute the upper-bits array, we find the difference between each of the upper bits
 and then convert to unary code.
